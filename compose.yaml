@@ -1,0 +1,20 @@
+services:
+  telem_server:
+    build: telem_server/
+    command: ["python3", "-u", "server.py"]
+    ports:
+      - "5005:5005"
+  telem_client:
+    build: telem_client/
+    environment:
+      PNT_HOST: ${PNT_HOST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - telem_server
+      - db
+  db:
+    image: postgres:13.16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"

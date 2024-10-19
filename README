@@ -1,0 +1,15 @@
+# Telemetry Processing Stack
+
+A test project implementing a minimally viable stack for ingesting telemetry data.
+
+## Design
+
+- The mock data publisher is primarily sourced from the provided python script. It generates telemetry data at a fixed rate of one message/sec and publishes it on request via a UDP connection.
+- The data ingestor is written in Go. It initiates a UDP connection and receives data from the mock data publisher. Received data is parsed and stored in a single PostgreSQL table
+- Services are containerized and deployed/configured with docker compose.
+
+## Setup
+
+1. Clone this repository.
+2. To build and run the stack, execute the following command
+   - ```docker compose up --build```

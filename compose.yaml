@@ -1,9 +1,12 @@
 services:
+  # produces telemetry data over udp
   telem_server:
     build: telem_server/
     command: ["python3", "-u", "server.py"]
     ports:
       - "5005:5005"
+
+  # ingests telemetry data over udp
   telem_client:
     build: telem_client/
     environment:
@@ -11,7 +14,23 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       - telem_server
+      - telem_api
       - db
+
+  # serves telemetry data via REST endpoints
+  telem_api:
+    build: telem_client/
+    environment:
+      API_PORT: ${API_PORT}
+      PNT_HOST: ${PNT_HOST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    depends_on:
+      - db
+    command: ["go", "run", "client.go", "api.go", "--api"]
+
+  # RDBMS for storing telemetry data
   db:
     image: postgres:13.16
     environment:

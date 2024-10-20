@@ -119,13 +119,12 @@ while True:
     except Exception as e:
         print(e)
         print("ERROR: Cannot connect to Port:", udp_port)
-        # udp_port += 1
 
 while True:
     message, addr = sock.recvfrom(1024)  # OK someone pinged me.
     print(f"received from {addr}: {message}")
-    # sock.sendto(b"Thank you!", addr)
     break
+
 # Start sending telemetry
 
 send_csp_telemetry_packet(sock, addr)

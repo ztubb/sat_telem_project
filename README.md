@@ -18,10 +18,18 @@ Services are containerized and deployed/configured with docker compose.
 2. Copy the `.env.example` into a `.env` file and make your local changes
 3. To build and run the stack, execute the following command
    - ```docker compose up --build```
+4. Once the services are up and some data has been ingested, you can query for data in your browser with the following:
+   ```
+   http://localhost:8080/range/?start=2024-10-20T18:38:57.593962Z&end=2025-10-20T18:38:57.593962Z
+   ```
+
+   ```
+   http://localhost:8080/sat/<satellite_id>
+   ```
 
 ## Scalability Improvements
 - To handle increased data rates, creating a "go-between" service to pull all data from the publisher down into a single global work queue could suffice. The Go ingestor clients would then need to be updated to process data from that global queue. This will enable us to scale up the number of ingestor replicas to a sufficient level where all incoming data is processed in near-real time. 
-- Observability and monitoring improvements should be implemented to stop ingesting data if any of the required services experience outages (e.g. if the database has gone down, we no longer want to process incoming data). Much of this could be implementing by moving the container orchestration into Kubernetes and leveraging `livenessProbe` configurations.
+- Observability and monitoring improvements should be implemented to stop ingesting data if any of the required services experience outages (e.g. if the database has gone down, we no longer want to process incoming data). Much of this could be implemented by moving the container orchestration into Kubernetes and leveraging `livenessProbe` configurations.
 - Leveraging Kubernetes resources (services) will also enable us to increase replica counts for the API to enable high-availability and increased request traffic.
 
 ## Additional Improvements
@@ -30,3 +38,4 @@ Services are containerized and deployed/configured with docker compose.
 - API caching to reduce round-trip Postgres queries
 - Websocket support in API layer to enable server to client comms (alerts)
 - Database partitioning/sharding to improve query performance, e.g. partitioning by day so that all telemetry for a given day is quickly accessible.
+- Improved logging to control log levels and reduce noise
